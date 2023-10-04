@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'styles.css' %}" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- for Icons -->
+    <script
+      src="https://kit.fontawesome.com/yourcode.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <!-- <link rel="icon" href="./templates/assets/17613.png" type="image/png" /> -->
+    <title>Finance Tracking Tool</title>
+    <!-- <script
+      type="module"
+      src="https://cdnjs.cloudflare.com/ajax/libs/firebase/7.14.1-0/firebase.js"
+    ></script>
+    <script type="module" src="signup.js"></script>
+    <script type="module" src="config.js"></script>
+    <script type="module" src="script.js"></script> -->
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- <header>
+        <div class="logo-container">
+          <img src="./assets/budget.png" alt="Logo" class="logo" />
+          <h1>Finance Tracking App</h1>
+        </div>
+      </header> -->
+      <header>
+        <div class="header-div">
+          <!-- <img src="./assets/17613-inverted.png" alt="logo" /> -->
+          <div id="openPopup" class="add-transaction">
+            <h4>Add Transaction</h4>
+          </div>
+        </div>
+      </header>
+      <hr />
+      <main>
+        <div id="myPopup" class="left-section popup">
+          <div class="popup-content">
+            <h2>Add transaction</h2>
+            <hr />
+            <form id="transaction-form">
+              <div class="alert">Your transaction has been recorded</div>
+              <div class="form-inputs1">
+                <div class="form-group">
+                  <label for="description">Description:</label>
+                  <input
+                    type="text"
+                    id="description"
+                    placeholder="Enter description"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="amount">Amount:</label>
+                  <input
+                    type="number"
+                    id="amount"
+                    placeholder="Enter amount"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="form-inputs2">
+                <div class="form-group">
+                  <label for="type">Type:</label>
+                  <select id="type" required>
+                    <option value="" selected disabled>Select type</option>
+                    <option value="Income">Income</option>
+                    <option value="Deduction">Deduction</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="date">Date:</label>
+                  <input type="date" id="date" required />
+                </div>
+              </div>
+              <div class="form-inputs3">
+                <button type="button" id="closePopup" class="cancel-button">
+                  Cancel
+                </button>
+                <button type="submit" id="closePopup" class="add-button">
+                  Add Transaction
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="right-section">
+          <div class="transaction-list-container">
+            <table id="transaction-list">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th>Amount</th>
+                  <th>Type</th>
+                  <th>Date</th>
+                  <th>Edit</th>
+                  <th>Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Table rows -->
+              </tbody>
+            </table>
+          </div>
+          <div id="totals-container">
+            <span id="total-balance">Total Balance: 10000.0</span>
+            <span id="total-income">Total Income: 0.0</span>
+            <span id="total-deduction">Total Deduction: 0.0</span>
+          </div>
+        </div>
+        <div class="graph-header">
+          <h2>Graphical Analysis</h2>
+        </div>
+        <div class="bottom-section">
+          <div id="loading-message" class="loading-message">
+            Please enter some data to see the Graphical Analysis.
+          </div>
+          <div class="slides-btn">
+            <button id="prev-button">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button id="next-button">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+          <div class="graph-section hidden slider-container">
+            <div class="chart-container slide">
+              <div id="description-chart-container">
+                <canvas
+                  id="description-chart"
+                  style="
+                    box-sizing: border-box;
+                    display: block;
+                    height: 400px;
+                    width: 400px;
+                    padding: 20px;
+                  "
+                  height="600"
+                ></canvas>
+              </div>
+              <div id="description-labels"></div>
+            </div>
+            <div class="chart-container slide">
+              <canvas
+                id="daily-transaction-chart"
+                style="
+                  box-sizing: border-box;
+                  display: block;
+                  height: 400px;
+                  width: 800px;
+                "
+              ></canvas>
+            </div>
+            <div class="chart-container slide">
+              <canvas
+                id="income-deduction-chart"
+                style="
+                  box-sizing: border-box;
+                  display: block;
+                  height: 400px;
+                  width: 400px;
+                "
+                height="600"
+              ></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+          <a href="login.html" class="logout-button">Logout</a>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Get the popup
+      const popup = document.getElementById("myPopup");
+      const openPopupButton = document.getElementById("openPopup");
+      const closePopupButton = document.getElementById("closePopup");
+
+      // Open the popup
+      openPopupButton.addEventListener("click", function () {
+        popup.classList.add("show");
+      });
+
+      // Close the popup
+      closePopupButton.addEventListener("click", function () {
+        popup.classList.remove("show");
+      });
+    </script>
+  </body>
+</html>
