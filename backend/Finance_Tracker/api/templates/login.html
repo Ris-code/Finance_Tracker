@@ -33,7 +33,9 @@
 
 </head>
 <body>
-    <form id="login-form" class="form">
+    <form id="login-form" class="form" method="POST">
+      {% csrf_token %}
+
         <h2>Login</h2>
         <p> Welcome back! Glad to see you .....</p>
         <div class="form-group">
@@ -45,7 +47,7 @@
           <input type="password" id="login-password" name="login-password" required>
         </div>
         <button type="submit">Login</button>
-        <p class="signup-link">New user? <a href="signup.html" id="signup-link">Sign up here</a></p>
+        <p class="signup-link">New user? <a href="{% url 'signup' %}" id="signup-link">Sign up here</a></p>
     </form> 
 </body>
 </html>

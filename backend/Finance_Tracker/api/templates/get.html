@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Script-Only HTML</title>
+</head>
+<body>
+    <!-- You can include a script here if needed -->
+    <script>
+          var userData = {
+          'username': '{{ user_profile.user.username }}',
+          'email': '{{ user_profile.email }}',
+          'name': '{{ user_profile.name }}',
+          'Current_Balance': '{{ user_profile.Current_Balance }}',
+      };
+    </script>
+    <script type="module" src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
