@@ -13,7 +13,7 @@
   <meta name="keywords" content="" />
   <meta name="description" content="" />
   <meta name="author" content="" />
-  <link rel="shortcut icon" href="{% static 'favicon.png' %}" type="">
+  <link rel="shortcut icon" href="{% static 'assets/budget.png' %}" type="">
 
   <title> FinTrack </title>
 
@@ -27,7 +27,7 @@
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
 
   <!-- font awesome style -->
-  <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'font-awesome.min.css' %}" rel="stylesheet" />
 
   <!-- Custom styles for this template -->
   <link href="{% static 'style.css' %}" rel="stylesheet" />
@@ -50,8 +50,9 @@
     <header class="header_section">
       <div class="container-fluid">
         <nav class="navbar navbar-expand-lg custom_nav-container ">
-          <a class="navbar-brand" href="index.html">
+          <a class="navbar-brand" href="{% url 'login' %}">
             <span>
+              <img src="{% static 'assets/budget.png' %}" alt="Logo" class="logo-img" width="50" height="50">
               FinTrack
             </span>
           </a>

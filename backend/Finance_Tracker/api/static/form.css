@@ -6,7 +6,10 @@
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
+    /* background-color: #f2f2f2; */
+    height: 100vh;
+    background: url(https://raw.githubusercontent.com/Ris-code/Finance_Tracker/main/backend/Finance_Tracker/api/static/assets/transaction-bg1.jpg?token=GHSAT0AAAAAACJIJXD5IGVWNTMGNIWX2U5UZJW72FQ) no-repeat center center fixed;
+    backdrop-filter: blur(5px);
   }
   
   .container {
@@ -24,9 +27,9 @@
     width: 500px;
     /* margin: 0 auto; */
     /* padding: 20px; */
-    border: 1px solid #ccc;
+    border: 5px solid #050000;
     border-radius: 20px;
-    background-color: #f9f9f9;
+    background-color: #fdfeff;
     display: flex;
     flex-direction: column;
     justify-content: center;

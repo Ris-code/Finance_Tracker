@@ -12,7 +12,7 @@ body {
   /* background-color: #f2f2f2; */
   /* background-color: #fbfdfe; */
   height: 100vh;
-  background: url(backend\Finance_Tracker\api\static\assets\transaction-bg1.jpg) no-repeat center center fixed;
+  background: url(https://raw.githubusercontent.com/Ris-code/Finance_Tracker/main/backend/Finance_Tracker/api/static/assets/transaction-bg1.jpg?token=GHSAT0AAAAAACJIJXD5IGVWNTMGNIWX2U5UZJW72FQ) no-repeat center center fixed;
   backdrop-filter: blur(5px);
   /* backdrop-filter: contrast(0.5); */
 }

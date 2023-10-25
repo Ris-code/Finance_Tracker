@@ -25,6 +25,8 @@ def home_page(request):
     else:
         # Handle cases where the user is not authenticated
         return render(request, 'index.html')
+    # user_profile = MyUser.objects.get(username=request.user)
+    # return render(request, 'index.html', {'user_profile': user_profile})
 
 def front_page(request):
     return render(request, 'home.html')
