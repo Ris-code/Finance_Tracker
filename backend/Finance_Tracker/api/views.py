@@ -7,13 +7,11 @@ from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from decimal import Decimal
 
-# def home_page(request):
-#     # user_profile = MyUser.objects.get(user=request.user)
-#     # user_profile = request.GET['home']
-#     user_profile = MyUser.objects.all()  
-#     print(user_profile)
-#     return render(request, 'index.html', {'user_profile': user_profile})
+
 def home_page(request):
     if request.user.is_authenticated:
         try:
@@ -46,32 +44,6 @@ def login_user(request):
             return redirect(login_user)
 
     return render(request, 'login.html')
-# def login_user(request):
-#     if request.method == 'POST':
-#         username = request.POST.get('login-username')
-#         password = request.POST.get('login-password')
-
-#         try:
-#             user = MyUser.objects.get(username=username)
-#         except MyUser.DoesNotExist:
-#             user = None
-
-#         if user:
-#             if user.user_type == 'customer':
-#                 user = auth.authenticate(username=username, password=password)
-#             elif user.user_type == 'staff':
-#                 user = auth.authenticate(username=username, password=password)
-#             elif user.user_type == 'admin':
-#                 user = auth.authenticate(username=username, password=password)
-
-#             if user is not None:
-#                 auth.login(request, user)
-#                 return redirect('home_page')
-        
-#         messages.error(request, 'Invalid Username or Password')
-#         return redirect('login_user')
-
-#     return render(request, 'login.html')
 
 def createpost(request):
     if request.method == 'POST':
@@ -81,6 +53,8 @@ def createpost(request):
         current_balance = request.POST.get('cur-balance')
         password1 = request.POST.get('password')
         password2 = request.POST.get('confirm-password')
+        # income = 0
+        # deduction = 0
 
         if password1 != password2:
             messages.info(request, 'Both passwords are not matching')
@@ -99,7 +73,9 @@ def createpost(request):
                 email=email_id,
                 password=password1,
                 name=name,
-                Current_Balance=current_balance
+                Current_Balance=current_balance,
+                # Total_Income=income,
+                # Total_Deduction=deduction
             )
             new_user.set_password(new_user.password)
             new_user.save()
@@ -110,8 +86,31 @@ def createpost(request):
     # Handle GET request or any other HTTP method
      return render(request, 'signup.html')
 
-# def get_data(request):
-#     if request.user.is_authenticated:
-#         user_profile = MyUser.objects.get(user=request.user)
-#         return render(request, 'get.html', {'user_profile': user_profile})
+@csrf_exempt
+def update_balance(request):
+    if request.method == 'POST':
+        amount = request.POST.get('amount')
+        cur_balance = request.POST.get('cur_balance')
+        type = request.POST.get('type')
+        print(amount)
+        print(type)
+        # Retrieve the user (you may need to adjust this part to get the current user)
+        user = MyUser.objects.get(username=request.user)
+        
+        # Update financial summary based on transaction type
+        if type == 'Income':
+            user.Total_Income = Decimal(amount)
+            user.Current_Balance = Decimal(cur_balance)
+        elif type == 'Deduction':
+            user.Total_Deduction = Decimal(amount)
+            user.Current_Balance = Decimal(cur_balance)
+        
+        # Save the updated financial summary
+        user.save()
+        
+        return JsonResponse({'message': 'Financial summary updated successfully.'})
+    else:
+        return JsonResponse({'error': 'Invalid request method.'}, status=400)
+
+
 

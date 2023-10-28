@@ -5,3 +5,5 @@ from django.contrib.auth.models import AbstractUser
 class MyUser(AbstractUser):
     name = models.CharField(max_length=500)
     Current_Balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    Total_Income = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    Total_Deduction = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)

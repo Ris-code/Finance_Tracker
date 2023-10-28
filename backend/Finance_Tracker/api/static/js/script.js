@@ -1,20 +1,3 @@
-// import firebase from "./config.js";
-
-// // Check if user is logged in
-// if (localStorage.getItem("userid") === null) {
-//   window.location.href = "login.html";
-// }
-// // // Form submission event listener
-// const form = document.getElementById("transaction-form");
-// form.addEventListener("submit", submitForm);
-
-// const form=document.getElementById("transaction-form");
-// form.addEventListener("submit", function(event) {
-//   // Call the functions from the first and second scripts
-//   addTransaction(event);
-//   // submitForm(event);
-// });
-
 // Initialize charts
 let descriptionChart;
 let dailyTransactionChart;
@@ -42,57 +25,113 @@ function addTransaction(event, rowIndex = -1) {
     return;
   }
 
-  // Clear form values
-  descriptionInput.value = "";
-  amountInput.value = "";
-  typeInput.value = "";
-  dateInput.value = "";
+  // // Clear form values
+  // descriptionInput.value = "";
+  // amountInput.value = "";
+  // typeInput.value = "";
+  // dateInput.value = "";
 
-  // Create or update transaction row
-  const transactionList = document.getElementById("transaction-list");
-  const row =
-    rowIndex === -1
-      ? transactionList.insertRow(1)
-      : transactionList.rows[rowIndex];
-  const descriptionCell = row.insertCell(0);
-  const amountCell = row.insertCell(1);
-  const typeCell = row.insertCell(2);
-  const dateCell = row.insertCell(3);
-  const editCell = row.insertCell(4);
-  const deleteCell = row.insertCell(5);
+  // // Create or update transaction row
+  // const transactionList = document.getElementById("transaction-list");
+  // const row =
+  //   rowIndex === -1
+  //     ? transactionList.insertRow(1)
+  //     : transactionList.rows[rowIndex];
+  // const descriptionCell = row.insertCell(0);
+  // const amountCell = row.insertCell(1);
+  // const typeCell = row.insertCell(2);
+  // const dateCell = row.insertCell(3);
+  // const editCell = row.insertCell(4);
+  // const deleteCell = row.insertCell(5);
 
-  descriptionCell.textContent = description;
-  amountCell.textContent = amount.toFixed(2);
-  typeCell.textContent = type;
-  dateCell.textContent = date;
+  // descriptionCell.textContent = description;
+  // amountCell.textContent = amount.toFixed(2);
+  // typeCell.textContent = type;
+  // dateCell.textContent = date;
 
-  const deleteButton = document.createElement("button");
-  deleteButton.textContent = "Delete";
-  deleteButton.classList.add("delete-button");
-  deleteButton.addEventListener(
-    "click",
-    deleteTransaction.bind(null, row, description, amount, type, date)
-  );
-  deleteCell.appendChild(deleteButton);
+  // const deleteButton = document.createElement("button");
+  // deleteButton.textContent = "Delete";
+  // deleteButton.classList.add("delete-button");
+  // deleteButton.addEventListener(
+  //   "click",
+  //   deleteTransaction.bind(null, row, description, amount, type, date)
+  // );
+  // deleteCell.appendChild(deleteButton);
 
-  const editButton = document.createElement("button");
-  editButton.textContent = "Edit";
-  editButton.classList.add("edit-button");
-  editButton.addEventListener("click", editTransaction.bind(null, row));
-  editCell.appendChild(editButton);
+  // const editButton = document.createElement("button");
+  // editButton.textContent = "Edit";
+  // editButton.classList.add("edit-button");
+  // editButton.addEventListener("click", editTransaction.bind(null, row));
+  // editCell.appendChild(editButton);
 
   // if (transactionList.rows.length === "Income") {
   //   row.classList.add("odd-row");
   // } else if (type === "Deduction") {
   //   row.classList.add("even-row");
   // }
+  if (rowIndex === -1) {
+    // Add a new row for the transaction
+    const transactionList = document.getElementById("transaction-list");
+    const row = transactionList.insertRow(1);
+    const descriptionCell = row.insertCell(0);
+    const amountCell = row.insertCell(1);
+    const typeCell = row.insertCell(2);
+    const dateCell = row.insertCell(3);
+    const editCell = row.insertCell(4);
+    const deleteCell = row.insertCell(5);
+
+    descriptionCell.textContent = description;
+    amountCell.textContent = amount.toFixed(2);
+    typeCell.textContent = type;
+    dateCell.textContent = date;
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.classList.add("delete-button");
+    deleteButton.addEventListener(
+      "click",
+      deleteTransaction.bind(null, row, description, amount, type, date)
+    );
+    deleteCell.appendChild(deleteButton);
+
+    const editButton = document.createElement("button");
+    editButton.textContent = "Edit";
+    editButton.classList.add("edit-button");
+    editButton.addEventListener("click", editTransaction.bind(null, row));
+    editCell.appendChild(editButton);
+  } else {
+    // If rowIndex is provided, update the transaction at the given index
+    const transactionList = document.getElementById("transaction-list");
+    const row = transactionList.rows[rowIndex];
+
+    row.cells[0].textContent = description;
+    row.cells[1].textContent = amount.toFixed(2);
+    row.cells[2].textContent = type;
+    row.cells[3].textContent = date;
+  }
 
   // Update charts
   updateCharts();
 
+  // Reset form fields
+  descriptionInput.value = "";
+  amountInput.value = "";
+  typeInput.value = "";
+  dateInput.value = "";
+  // console.log(type);
+  // // Update charts
+  // updateCharts();
+
   // Update total income and total deduction
-  updateTotalIncome();
-  updateTotalDeduction();
+  if (type === "Income") {
+    // updateTotalDeduction();
+    updateTotalIncome(amount);
+  } 
+  else if (type === "Deduction") {
+    // updateTotalIncome();
+    updateTotalDeduction(amount);
+  }
+ 
 }
 
 // Function to delete a transaction
@@ -104,8 +143,12 @@ function deleteTransaction(row, description, amount, type, date) {
   updateCharts();
 
   // Update total income and total deduction
-  updateTotalIncome();
-  updateTotalDeduction();
+  if(type==="Income"){
+    updateTotalIncome(-amount);
+  }
+  else if(type==="Deduction"){
+    updateTotalDeduction(-amount);
+  }
 }
 
 // Function to edit a transaction
@@ -123,15 +166,68 @@ function editTransaction(row) {
   const typeInput = document.getElementById("type");
   const dateInput = document.getElementById("date");
 
-  descriptionInput.value = descriptionCell.textContent;
-  amountInput.value = parseFloat(amountCell.textContent);
-  typeInput.value = typeCell.textContent;
-  dateInput.value = dateCell.textContent;
+  // descriptionInput.value = descriptionCell.textContent;
+  // amountInput.value = parseFloat(amountCell.textContent);
+  // typeInput.value = typeCell.textContent;
+  // dateInput.value = dateCell.textContent;
 
+  const cancelButton = document.getElementById("closePopup");
+  cancelButton.disabled = true;
+
+   // Create variables to store the initial values
+   const initialDescription = descriptionCell.textContent;
+   const initialAmount = parseFloat(amountCell.textContent);
+   const initialType = typeCell.textContent;
+   const initialDate = dateCell.textContent;
+ 
+   descriptionInput.value = initialDescription;
+   amountInput.value = initialAmount;
+   typeInput.value = initialType;
+   dateInput.value = initialDate;
+ 
+   // Get the cancel button
+  //  const cancelButton = document.getElementById("closePopup");
+ 
+  //  // Enable the cancel button
+  //  cancelButton.disabled = false;
+ 
+  //  // Add an event listener to the cancel button to handle the cancel action
+  //  cancelButton.addEventListener("click", function cancelEdit() {
+  //    // Restore initial values on cancel
+  //    descriptionInput.value = initialDescription;
+  //    amountInput.value = initialAmount;
+  //    typeInput.value = initialType;
+  //    dateInput.value = initialDate;
+ 
+  //    // Remove the event listener to avoid multiple bindings
+  //    cancelButton.removeEventListener("click", cancelEdit);
+ 
+  //    // Hide the popup
+  //    popup.classList.remove("show");
+ 
+  //    // Revert the disabled state of the cancel button
+  //    cancelButton.disabled = false;
+  //  });
   // Delete existing transaction row
   const transactionList = document.getElementById("transaction-list");
-  transactionList.deleteRow(row.rowIndex);
+  console.log(parseFloat(amountCell.textContent));
+  console.log(typeCell.textContent);
 
+  // if(typeCell.textContent==="Income"){
+  //   console.log(1);
+  //   updateTotalIncome(-parseFloat(amountCell.textContent));
+  // }
+  // else if(typeCell.textContent==="Deduction"){
+  //   updateTotalDeduction(-parseFloat(amountCell.textContent));
+  // }
+  transactionList.deleteRow(row.rowIndex);
+  
+  if(typeCell.textContent==="Income"){
+    updateTotalIncome(-1*parseFloat(amountCell.textContent));
+  }
+  else if(typeCell.textContent==="Deduction"){
+    updateTotalDeduction(-1*parseFloat(amountCell.textContent));
+  }
   // Update charts without adding a new row
   updateCharts();
 
@@ -139,10 +235,15 @@ function editTransaction(row) {
   document
     .getElementById("transaction-form")
     .scrollIntoView({ behavior: "smooth" });
-
+  
+  cancelButton.disabled = false;
   // Update total income and total deduction
-  updateTotalIncome();
-  updateTotalDeduction();
+  // if(typeInput.value==="Income"){
+  //   updateTotalIncome(parseFloat(amountInput.value)-parseFloat(amountCell.textContent));
+  // }
+  // else if(typeInput.value==="Deduction"){
+  //   updateTotalDeduction(parseFloat(amountInput.value)-parseFloat(amountCell.textContent));
+  // }
 }
 
 // Function to update the charts
@@ -438,163 +539,94 @@ Array.from(editButtons).forEach((button) => {
 // console.log(userData.name);
 // console.log(userData.Current_balance);
 // Use the data as needed in your JavaScript code
-
-let nettotalIncome = 0;
-let nettotalDeduction = 0;
-let starting_balance = userData.Current_balance;
-// let starting_balance = 100000;
-
-const totalBalanceElement = document.getElementById("total-balance");
-
-// Calculate the current balance
-const currentBalance = starting_balance + nettotalIncome - nettotalDeduction;
-console.log(currentBalance)
-// Update the "Total Balance" element in the HTML
-totalBalanceElement.textContent = "Total Balance: " + currentBalance.toFixed(2);
-// // Function to update total income
-function updateTotalIncome() {
-  const transactionList = document.getElementById("transaction-list");
-  let totalIncome = 0;
-
-  for (let i = 1; i < transactionList.rows.length; i++) {
-    const row = transactionList.rows[i];
-    const amountCell = row.cells[1];
-    const typeCell = row.cells[2];
-
-    if (typeCell.textContent === "Income") {
-      totalIncome += parseFloat(amountCell.textContent);
-    }
+function getCookie(name) {
+  var cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i].trim();
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
   }
-
-  nettotalIncome = totalIncome;
-
-  const totalIncomeElement = document.getElementById("total-income");
-  totalIncomeElement.textContent = "Total Income: " + totalIncome.toFixed(2);
-
-  const totalBalance = document.getElementById("total-balance");
-  console.log(starting_balance);
-  const cur_balance = starting_balance - nettotalDeduction + nettotalIncome;
-  console.log(cur_balance);
-  totalBalance.textContent = "Total Balance: " + cur_balance.toFixed(2);
-  console.log(totalBalance.textContent);
+  return cookieValue;
 }
 
-// // Function to update total deduction
-function updateTotalDeduction() {
-  const transactionList = document.getElementById("transaction-list");
-  let totalDeduction = 0;
 
-  for (let i = 1; i < transactionList.rows.length; i++) {
-    const row = transactionList.rows[i];
-    const amountCell = row.cells[1];
-    const typeCell = row.cells[2];
+let nettotalIncome = userData.Total_income;
+let nettotalDeduction = userData.Total_deduction;
+let starting_balance = userData.Current_balance;
 
-    if (typeCell.textContent === "Deduction") {
-      totalDeduction += parseFloat(amountCell.textContent);
-    }
-  }
+const totalBalanceElement = document.getElementById("total-balance");
+const totalIncomeElement = document.getElementById("total-income");
+const totalDeductionElement = document.getElementById("total-deduction");
 
-  nettotalDeduction = totalDeduction;
+// Update the "Total Balance" element in the HTML
+totalBalanceElement.textContent = "Total Balance: " + starting_balance;
+totalIncomeElement.textContent = "Total Income: " + nettotalIncome;
+totalDeductionElement.textContent = "Total Deduction: " + nettotalDeduction;
+
+let Current_balance = parseFloat(starting_balance);
+let total_i=0;
+let total_n = 0;
+
+function updateTotalIncome(amount) {
+  let totalIncome = total_i+amount;
+
+  total_i=totalIncome;
+  const totalIncomeElement = document.getElementById("total-income");
+  totalIncomeElement.textContent = "Total Income: " + (parseFloat(nettotalIncome) + totalIncome).toFixed(2);
+
+  const totalBalance1 = document.getElementById("total-balance");
+  // Update total balance
+  const cur_balance1 =  parseFloat(starting_balance)+totalIncome-total_n; // Update total balance
+  totalBalance1.textContent = "Total Balance: " + cur_balance1.toFixed(2); // Update total balance element
+
+  // Send an AJAX request to update the server with the new balance
+  $.ajax({
+    url: '/update-balance/',
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken')
+    },
+    data: {
+      amount: (parseFloat(nettotalIncome) + totalIncome).toFixed(2),
+      cur_balance: cur_balance1.toFixed(2),
+      type: "Income"
+    },
+  });
+}
+
+
+function updateTotalDeduction(amount) {
+  let totalDeduction = total_n+amount;
+  total_n=totalDeduction;
 
   const totalDeductionElement = document.getElementById("total-deduction");
   totalDeductionElement.textContent =
-    "Total Deduction: " + totalDeduction.toFixed(2);
+    "Total Deduction: " + (parseFloat(nettotalDeduction)+totalDeduction).toFixed(2);
 
   const totalBalance = document.getElementById("total-balance");
-  const cur_balance = starting_balance - nettotalDeduction + nettotalIncome;
+  // starting_balance = parseFloat(starting_balance) - totalDeduction;
+  const cur_balance = parseFloat(starting_balance) + total_i - totalDeduction;
   totalBalance.textContent = "Total Balance: " + cur_balance.toFixed(2);
+
+  $.ajax({
+    url: '/update-balance/',
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken')
+   },
+    data: {
+        amount: (parseFloat(nettotalDeduction)+totalDeduction).toFixed(2),
+        cur_balance: cur_balance.toFixed(2),
+        type: "Deduction"
+    },
+    });
 }
-
-// fetch('/api/get_data/')
-//     .then(response => response.json())
-//     .then(data => {
-//       // const starting_balance = ;
-//         console.log(data);
-//     })
-//     .catch(error => {
-//         console.error('Error:', error);
-//     });
-
-// // reference your database
-// var transactionFormDB = firebase.database().ref("Transactions_History");
-
-// // document.getElementById("transaction-form").addEventListener("submit", submitForm);
-// const saveMessages = (description, amount, type, date) => {
-//   var newContactForm = transactionFormDB.push();
-
-//   newContactForm.set({
-//     description: description,
-//     amount: amount,
-//     type: type,
-//     date: date,
-//     username: localStorage.userid,
-//   });
-// };
-
-// function submitForm(event) {
-//   popup.classList.remove("show"); //to remove popup
-
-//   event.preventDefault();
-
-//   var description = document.getElementById("description").value;
-//   var amount = document.getElementById("amount").value;
-//   var type = document.getElementById("type").value;
-//   var date = document.getElementById("date").value;
-
-//   console.log(description, amount, type, date);
-
-//   // Check if the amount is a valid number
-//   if (isNaN(amount)) {
-//     alert("Please enter a valid amount.");
-//     return;
-//   }
-
-//   saveMessages(description, amount, type, date);
-
-//   //   enable alert
-//   document.querySelector(".alert").style.display = "block";
-
-//   //   remove the alert
-//   setTimeout(() => {
-//     document.querySelector(".alert").style.display = "none";
-//   }, 3000);
-
-//   //   reset the form
-//   // document.getElementById("transaction-form").reset();
-//   addTransaction(event);
-// }
-
-// const getElementVal = (id) => {
-//   return document.getElementById(id).value;
-// };
-
-// // const getTransaction = () => {
-// //   var transactionFormDB = firebase.database().ref("Transactions_History");
-// //   transactionFormDB.on("value", (snapshot) => {
-// //     snapshot.forEach((childSnapshot) => {
-// //       const childData = childSnapshot.val();
-// //       if (childData.username == localStorage.userid) {
-// //         console.log(childData);
-// //       }
-// //     });
-// //   });
-// // };
-// // getTransaction();
-
-// // const getUserDetails = () => {
-// //   var userFormDB = firebase.database().ref("registration");
-// //   userFormDB.on("value", (snapshot) => {
-// //     snapshot.forEach((childSnapshot) => {
-// //       const childData = childSnapshot.val();
-// //       if (childData.username == localStorage.userid) {
-// //         console.log(childData);
-// //         return childData;
-// //       }
-// //     });
-// //   });
-// // };
-// // getUserDetails();
-
 
 // Slides JS
 // Get references to DOM elements
@@ -622,3 +654,206 @@ function showPrevSlide() {
 // Add event listeners to navigation buttons
 document.getElementById('next-button').addEventListener('click', showNextSlide);
 document.getElementById('prev-button').addEventListener('click', showPrevSlide);
+
+// function handleEditButtonClick() {
+//   const row = this.parentNode.parentNode;
+//   editTransaction(row);
+// }
+
+// // Function to remove event listeners from "Edit" buttons
+// function removeEditButtonListeners() {
+//   const editButtons = document.getElementsByClassName("edit-button");
+//   Array.from(editButtons).forEach((button) => {
+//     button.removeEventListener("click", handleEditButtonClick);
+//   });
+// }
+
+// // Function to set event listeners for "Edit" buttons
+// function setEditButtonListeners() {
+//   const editButtons = document.getElementsByClassName("edit-button");
+//   Array.from(editButtons).forEach((button) => {
+//     button.addEventListener("click", handleEditButtonClick);
+//   });
+// }
+
+// // Set initial event listeners for "Edit" buttons
+// setEditButtonListeners();
+
+// function editTransaction(row) {
+//   const descriptionCell = row.cells[0];
+//   const amountCell = row.cells[1];
+//   const typeCell = row.cells[2];
+//   const dateCell = row.cells[3];
+
+//   // Fill form with existing transaction data
+//   const descriptionInput = document.getElementById("description");
+//   const amountInput = document.getElementById("amount");
+//   const typeInput = document.getElementById("type");
+//   const dateInput = document.getElementById("date");
+
+//   descriptionInput.value = descriptionCell.textContent;
+//   amountInput.value = parseFloat(amountCell.textContent).toFixed(2);
+//   typeInput.value = typeCell.textContent;
+//   dateInput.value = dateCell.textContent;
+//   let old_type = typeInput.value;
+//   // Temporarily hide the edit button
+//   const editButton = row.querySelector(".edit-button");
+//   editButton.style.display = "none";
+
+//   // Store the original data in a data attribute for later restoration
+//   row.dataset.originalValues = JSON.stringify({
+//     description: descriptionCell.textContent,
+//     amount: amountCell.textContent,
+//     type: typeCell.textContent,
+//     date: dateCell.textContent
+//   });
+
+//   // Show the form and enable the cancel and submit buttons
+//   const popup = document.getElementById("myPopup");
+//   popup.classList.add("show");
+//   const cancelBtn = document.querySelector("#transaction-form .cancel-button");
+//   const submitBtn = document.querySelector("#transaction-form .add-button");
+//   cancelBtn.disabled = false;
+//   submitBtn.disabled = false;
+
+//   // On cancel, restore the original data and hide the form again
+//   cancelBtn.addEventListener("click", function() {
+//     const originalValues = JSON.parse(row.dataset.originalValues);
+//     descriptionCell.textContent = originalValues.description;
+//     amountCell.textContent = originalValues.amount;
+//     typeCell.textContent = originalValues.type;
+//     dateCell.textContent = originalValues.date;
+
+//     // Re-show the edit button
+//     editButton.style.display = "block";
+
+//     // Hide the form and disable the cancel and submit buttons
+//     popup.classList.remove("show");
+//     cancelBtn.disabled = true;
+//     submitBtn.disabled = true;
+//   });
+
+//   // On submit, update the row with the new values
+//   submitBtn.addEventListener("click", function() {
+//     const oldAmount = parseFloat(amountCell.textContent);
+//     const newAmount = parseFloat(amountInput.value);
+//     const type = typeInput.value;
+
+//     descriptionCell.textContent = descriptionInput.value;
+//     amountCell.textContent = newAmount.toFixed(2);
+//     typeCell.textContent = type;
+//     dateCell.textContent = dateInput.value.split("-").reverse().join("/");
+    
+//     let new_type = typeCell.textContent;
+//     // Re-show the edit button
+//     editButton.style.display = "block";
+
+//     // Hide the form and disable the cancel and submit buttons
+//     popup.classList.remove("show");
+//     cancelBtn.disabled = true;
+//     submitBtn.disabled = true;
+//     console.log(old_type)
+//     console.log(new_type)
+//     console.log(oldAmount)
+//     console.log(newAmount)  
+//     // Update the charts and totals
+//     updateCharts();
+//     // const diffAmount = newAmount ;
+//     if (old_type === "Income" ) {
+//       updateTotalIncome(-1*oldAmount);
+//     } else if (old_type === "Deduction") {
+//       updateTotalDeduction(-1*oldAmount);
+//     }
+//     if (new_type === "Income" ) {
+//       updateTotalIncome(newAmount);
+//     } else if (new_type === "Deduction") {
+//       updateTotalDeduction(newAmount);
+//     }
+//     old_type="";
+//     new_type="";
+//   });
+// }
+
+
+// // Function to update total income
+// function updateTotalIncome() {
+//   const transactionList = document.getElementById("transaction-list");
+//   let totalIncome = 0;
+
+//   for (let i = 1; i < transactionList.rows.length; i++) {
+//     const row = transactionList.rows[i];
+//     const amountCell = row.cells[1];
+//     const typeCell = row.cells[2];
+
+//     if (typeCell.textContent === "Income") {
+//       totalIncome += parseFloat(amountCell.textContent);
+//       // Current_balance = Current_balance + parseFloat(amountCell.textContent);
+//     }
+//   }
+
+//   const totalIncomeElement = document.getElementById("total-income");
+//   totalIncomeElement.textContent = "Total Income: " + (parseFloat(nettotalIncome) + totalIncome).toFixed(2);
+//   total_i=totalIncome;
+//   const totalBalance1 = document.getElementById("total-balance");
+//   // Update total balance
+//   const cur_balance1 =  parseFloat(starting_balance)+totalIncome-total_n; // Update total balance
+//   totalBalance1.textContent = "Total Balance: " + cur_balance1.toFixed(2); // Update total balance element
+
+//   // Send an AJAX request to update the server with the new balance
+//   $.ajax({
+//     url: '/update-balance/',
+//     method: 'POST',
+//     headers: {
+//       'X-CSRFToken': getCookie('csrftoken')
+//     },
+//     data: {
+//       amount: totalIncome.toFixed(2),
+//       type: "Income"
+//     },
+//   });
+// }
+
+
+
+// // Function to update total deduction
+// function updateTotalDeduction() {
+//   const transactionList = document.getElementById("transaction-list");
+//   let totalDeduction = 0 ;
+
+//   for (let i = 1; i < transactionList.rows.length; i++) {
+//     const row = transactionList.rows[i];
+//     const amountCell = row.cells[1];
+//     const typeCell = row.cells[2];
+
+//     if (typeCell.textContent === "Deduction") {
+//       totalDeduction += parseFloat(amountCell.textContent);
+//       // Current_balance = Current_balance - parseFloat(amountCell.textContent);
+//     }
+//   }
+
+//   // nettotalDeduction = nettotalDeduction+totalDeduction;
+
+//   const totalDeductionElement = document.getElementById("total-deduction");
+//   totalDeductionElement.textContent =
+//     "Total Deduction: " + (parseFloat(nettotalDeduction)+totalDeduction).toFixed(2);
+//   total_n=totalDeduction;
+//   const totalBalance = document.getElementById("total-balance");
+//   // starting_balance = parseFloat(starting_balance) - totalDeduction;
+//   const cur_balance = parseFloat(starting_balance) + total_i - totalDeduction;
+//   totalBalance.textContent = "Total Balance: " + cur_balance.toFixed(2);
+
+//   $.ajax({
+//     url: '/update-balance/',
+//     method: 'POST',
+//     headers: {
+//       'X-CSRFToken': getCookie('csrftoken')
+//    },
+//     data: {
+//         amount: totalDeduction.toFixed(2),
+//         type: "Deduction"
+//     },
+//     });
+// }
+
+
+

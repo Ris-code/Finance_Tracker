@@ -12,7 +12,8 @@ body {
   /* background-color: #f2f2f2; */
   /* background-color: #fbfdfe; */
   height: 100vh;
-  background: url(https://raw.githubusercontent.com/Ris-code/Finance_Tracker/main/backend/Finance_Tracker/api/static/assets/transaction-bg1.jpg?token=GHSAT0AAAAAACJIJXD5IGVWNTMGNIWX2U5UZJW72FQ) no-repeat center center fixed;
+  /* background: url("https://i.ibb.co/8dgcLvP/transaction-bg1.jpg") ; */
+  background: url("https://i.ibb.co/VTLDz40/wp9223603-finance-4k-wallpapers.jpg") ;
   backdrop-filter: blur(5px);
   /* backdrop-filter: contrast(0.5); */
 }
@@ -64,7 +65,7 @@ hr {
 }
 
 h1 {
-  color: #00000f;
+  color: #ffffff;
   /* font-size: 44px; */
   font-weight: 100;
   /* margin-left: 15px; */
@@ -104,7 +105,7 @@ main {
 
 h2 {
   /* color: #5a5af3; */
-  color: #000000de;
+  color: #000000;
   font-family: "Roboto", sans-serif;
   font-size: 24px;
   font-weight: 300;
@@ -398,7 +399,7 @@ select {
 }
 
 .graph-header h2 {
-  color: #000000de;
+  color: #ffffff;
   font-family: "Barlow", sans-serif;
   font-size: 3rem;
   font-weight: 900;
